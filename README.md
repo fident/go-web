@@ -6,6 +6,9 @@ Go SDK for Fident web projects
 Helper library for decoding data from fident authtokens
 ```go
 gofidentweb.InitTokenHelperWithAESAndRSAPub(AESKey,RSAPemLocation)
+
+// Can then call this method to get the currently logged in user
+func VerifyRequestToken(r *http.Request) (UserDetails, error)
 ```
 
 ---
