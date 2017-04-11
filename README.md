@@ -28,6 +28,9 @@ Helper sets up your endpoint for recieving notifications when users change their
 // Notificationendpoint (registered with fident)
 gofidentweb.SetNotificationHandler(fidentNotificationHandler)
 server.HandleFunc(NotificationEndpoint, gofidentweb.NotificationEndpoint)
+
+// The following method would be called with a user update notification payload
+func fidentNotificationHandler(payload fident.UserUpdatePayload) {
 ```
 
 ---
