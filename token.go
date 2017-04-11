@@ -1,4 +1,4 @@
-package fident
+package gofidentweb
 
 import (
 	"crypto/aes"
