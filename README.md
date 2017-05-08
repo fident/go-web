@@ -15,7 +15,8 @@ func VerifyRequestToken(r *http.Request) (UserDetails, error)
 #### URL Helper
 Generates fident URLS that you can send users to for actions such as login,logout and registration. Generally these actions will direct back to your domain on completion.
 ```go
-gofidentweb.InitURLHelper(productURL, fidentServiceURL)
+// Init the URL helper, set 'fidentRegistrationSecret' to "" if you don't plan on using pre-registered verified registration URLs
+gofidentweb.InitURLHelper(productServiceURL, fidentServiceURL, fidentRegistrationSecret)
 
 // Actions now available such as the method below
 func GetLoginURL() string 
