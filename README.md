@@ -1,6 +1,10 @@
 # go-web
 Go SDK for Fident web projects
 
+```go
+import gofidentweb "github.com/fident/go-web"
+```
+
 ---
 #### Token Helper
 Helper library for decoding data from fident authtokens
