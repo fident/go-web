@@ -1,4 +1,4 @@
-# gofidentweb
+# go-web
 Go SDK for Fident web projects
 
 ---
