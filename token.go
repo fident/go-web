@@ -41,6 +41,8 @@ type UserDetails struct {
 	Type       int8        `json:"T"`
 	Attributes []attribute `json:"A"`
 	Useragent  string      `json:"U"`
+	MFA        bool        `json:"M"`
+	Verified   bool        `json:"V"`
 }
 
 // InitTokenHelperWithAESAndRSAPub initialises the fident token package with required crypto keys
