@@ -14,12 +14,13 @@ import (
 **/
 
 const (
-	fidentDestinationParam     = "destination"
-	fidentRegEmailParam        = "email"
-	fidentSigParm              = "presig"
-	fidentLoginEndpoint        = "/login"
-	fidentLogoutEndpoint       = "/logout"
-	fidentRegistrationEndpoint = "/register"
+	fidentDestinationParam         = "destination"
+	fidentRegEmailParam            = "email"
+	fidentSigParm                  = "presig"
+	fidentLoginEndpoint            = "/login"
+	fidentLogoutEndpoint           = "/logout"
+	fidentRegistrationEndpoint     = "/register"
+	fidentPostRegistrationEndpoint = "/post-register"
 )
 
 var (
@@ -49,6 +50,11 @@ func GetLogoutURL() string {
 // GetRegistrationURL get fident registration URL that redirects back to project after registration
 func GetRegistrationURL() string {
 	return fmt.Sprintf("%s%s?%s=%s", nFidentServiceEndpoint, fidentRegistrationEndpoint, fidentDestinationParam, nProductServiceEndpoint)
+}
+
+// GetRegistrationPostURL get fident registration form POST URL that redirects back to project after registration & login : use key 'email'
+func GetRegistrationPostURL() string {
+	return fmt.Sprintf("%s%s?%s=%s", nFidentServiceEndpoint, fidentPostRegistrationEndpoint, fidentDestinationParam, nProductServiceEndpoint)
 }
 
 // GetVerifiedRegistrationURL get fident registration URL where your app has already verified the email address
