@@ -19,6 +19,7 @@ const (
 	fidentSigParm                  = "presig"
 	fidentLoginEndpoint            = "/login"
 	fidentLogoutEndpoint           = "/logout"
+	fidentManagementEndpoint       = "/user-management"
 	fidentRegistrationEndpoint     = "/register"
 	fidentPostRegistrationEndpoint = "/post-register"
 )
@@ -40,6 +41,11 @@ func InitURLHelper(productServiceURL, fidentServiceURL, fidentRegistrationSecret
 // GetLoginURL get fident login URL that redirects back to project on login
 func GetLoginURL() string {
 	return fmt.Sprintf("%s%s?%s=%s", nFidentServiceEndpoint, fidentLoginEndpoint, fidentDestinationParam, nProductServiceEndpoint)
+}
+
+// GetManagementURL get fident account management URL for current user
+func GetManagementURL() string {
+	return fmt.Sprintf("%s%s?%s=%s", nFidentServiceEndpoint, fidentManagementEndpoint, fidentDestinationParam, nProductServiceEndpoint)
 }
 
 // GetLogoutURL get fident logout URL that redirects back to project on logout
