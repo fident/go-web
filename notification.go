@@ -49,6 +49,31 @@ type UserAttribute struct {
 	Value string `json:"Value"`
 }
 
+// GetFirstNameAttribute returns the first name from account detail attributes
+func (a *UserUpdatePayload) GetFirstNameAttribute() string {
+	for _, r := range a.Attributes {
+		if r.Key == attributeKeyFirstName {
+			return r.Value
+		}
+	}
+	return ""
+}
+
+// GetLastNameAttribute returns the last name from account detail attributes
+func (a *UserUpdatePayload) GetLastNameAttribute() string {
+	for _, r := range a.Attributes {
+		if r.Key == attributeKeyLastName {
+			return r.Value
+		}
+	}
+	return ""
+}
+
+// GetEmailAddress returns email address for account
+func (a *UserUpdatePayload) GetEmailAddress() string {
+	return a.Username
+}
+
 type userAttributeSlice []UserAttribute
 
 // NotificationHandler is interface for notification update handler
