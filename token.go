@@ -45,6 +45,20 @@ type UserDetails struct {
 	Verified   bool        `json:"V"`
 }
 
+// InitWithRSAPub initialises the fident token package with required crypto keys
+func InitWithRSAPub(RSAPubKeyLocation string) error {
+	keyData, err := ioutil.ReadFile(RSAPubKeyLocation)
+	if err != nil {
+		return err
+	}
+	key, err := jwt.ParseRSAPublicKeyFromPEM(keyData)
+	if err != nil {
+		return err
+	}
+	rsaPublicKey = *key
+	return nil
+}
+
 // InitTokenHelperWithAESAndRSAPub initialises the fident token package with required crypto keys
 func InitTokenHelperWithAESAndRSAPub(AESKey, RSAPubKeyLocation string) error {
 	aesKey = AESKey

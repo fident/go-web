@@ -31,6 +31,7 @@ func GetLoginURL() string
 Helper sets up your endpoint for recieving notifications when users change their details in Fident
 ```go
 // Notificationendpoint (registered with fident)
+gofidentweb.InitWithRSAPub(pathToFidentPublicKey)
 gofidentweb.SetNotificationHandler(fidentNotificationHandler)
 server.HandleFunc(NotificationEndpoint, gofidentweb.NotificationEndpoint)
 
