@@ -158,18 +158,18 @@ func verifyNotification(n UserUpdatePayload) bool {
 		attsig += a.Key + a.Value
 	}
 
-	sigString := jsonAttributesKey + attsig + jsonCreatedKey + fmt.Sprintf("%d", n.Created) + jsonIDKey + n.ID + jsonTypeKey +
-		fmt.Sprintf("%d", n.PayloadType) + jsonUsernameKey + n.Username
+	sigString := JSONAttributesKey + attsig + JSONCreatedKey + fmt.Sprintf("%d", n.Created) + JSONIDKey + n.ID + JSONTypeKey +
+		fmt.Sprintf("%d", n.PayloadType) + JSONUsernameKey + n.Username
 
 	return rsaVerify(sigString, n.Signature, &rsaPublicKey)
 }
 
 // NotificationFirstNameAttributeKey returns key for first name attribute
 func NotificationFirstNameAttributeKey() string {
-	return attributeKeyFirstName
+	return AttributeKeyFirstNameKey
 }
 
 // NotificationLastNameAttributeKey returns key for last name attribute
 func NotificationLastNameAttributeKey() string {
-	return attributeKeyLastName
+	return AttributeKeyLastNameKey
 }
