@@ -39,6 +39,9 @@ const (
 
 	// AttributeKeyLastNameKey is the key for the last name user identity attribute
 	AttributeKeyLastNameKey = "lastname"
+
+	// ConfirmationResponse is the response body from sucessful requests to
+	ConfirmationResponse = "con"
 )
 
 // UserUpdatePayload is the serialisable structure for user updates
@@ -85,7 +88,7 @@ func (a *UserUpdatePayload) GetEmailAddress() string {
 type userAttributeSlice []UserAttribute
 
 // NotificationHandler is interface for notification update handler
-type NotificationHandler func(update UserUpdatePayload)
+type NotificationHandler func(update UserUpdatePayload) bool
 
 func (d userAttributeSlice) Len() int { return len(d) }
 
@@ -123,7 +126,9 @@ func NotificationEndpoint(rw http.ResponseWriter, req *http.Request) {
 	if err == nil {
 		if verifyNotification(payload) {
 			if notificationHandler != nil {
-				notificationHandler(payload)
+				if notificationHandler(payload) {
+					rw.Write([]byte(ConfirmationResponse))
+				}
 			} else {
 				fmt.Printf("Fident notification helper: Recieved notification but notificationHandler has not been set")
 			}
