@@ -15,22 +15,30 @@ import (
 /**
 * Fident Notification handler
 **/
-
-const postDataField = "data"
-
 const (
-	jsonIDKey         = "ID"
-	jsonUsernameKey   = "Username"
-	jsonCreatedKey    = "Created"
-	jsonAttributesKey = "Attributes"
-	jsonSignatureKey  = "Signature"
-	jsonTypeKey       = "Type"
+	// JSONIDKey is the key used for ID
+	JSONIDKey = "ID"
 
-	// AttributeKeyFirstName is the key for the first name user identity attribute
-	attributeKeyFirstName = "firstname"
+	// JSONUsernameKey is the key used for username
+	JSONUsernameKey = "Username"
 
-	// AttributeKeyLastName is the key for the last name user identity attribute
-	attributeKeyLastName = "lastname"
+	// JSONCreatedKey is the key used for created epoch
+	JSONCreatedKey = "Created"
+
+	// JSONAttributesKey is the key used for identity attributes
+	JSONAttributesKey = "Attributes"
+
+	// JSONSignatureKey is the key used for fident signature
+	JSONSignatureKey = "Signature"
+
+	// JSONTypeKey is the key used for identity type
+	JSONTypeKey = "Type"
+
+	// AttributeKeyFirstNameKey is the key for the first name user identity attribute
+	AttributeKeyFirstNameKey = "firstname"
+
+	// AttributeKeyLastNameKey is the key for the last name user identity attribute
+	AttributeKeyLastNameKey = "lastname"
 )
 
 // UserUpdatePayload is the serialisable structure for user updates
@@ -52,7 +60,7 @@ type UserAttribute struct {
 // GetFirstNameAttribute returns the first name from account detail attributes
 func (a *UserUpdatePayload) GetFirstNameAttribute() string {
 	for _, r := range a.Attributes {
-		if r.Key == attributeKeyFirstName {
+		if r.Key == AttributeKeyFirstNameKey {
 			return r.Value
 		}
 	}
@@ -62,7 +70,7 @@ func (a *UserUpdatePayload) GetFirstNameAttribute() string {
 // GetLastNameAttribute returns the last name from account detail attributes
 func (a *UserUpdatePayload) GetLastNameAttribute() string {
 	for _, r := range a.Attributes {
-		if r.Key == attributeKeyLastName {
+		if r.Key == AttributeKeyLastNameKey {
 			return r.Value
 		}
 	}
@@ -123,6 +131,7 @@ func NotificationEndpoint(rw http.ResponseWriter, req *http.Request) {
 			fmt.Printf("Fident notification helper: Recieved unsigned notification")
 		}
 	}
+
 }
 
 // rsaVerify message signature with public key
