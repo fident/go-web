@@ -28,7 +28,8 @@ var (
 	rsaPublicKey rsa.PublicKey
 )
 
-type attribute struct {
+// Attribute is a single user attribute
+type Attribute struct {
 	ID    string `json:"I"`
 	Key   string `json:"K"`
 	Value string `json:"V"`
@@ -36,13 +37,52 @@ type attribute struct {
 
 // UserDetails is the decrypted user token taken from cookies with fident
 type UserDetails struct {
-	IdentityID string      `json:"I"`
-	Username   string      `json:"N"`
-	Type       int8        `json:"T"`
-	Attributes []attribute `json:"A"`
-	Useragent  string      `json:"U"`
-	MFA        bool        `json:"M"`
-	Verified   bool        `json:"V"`
+	IdentityID         string      `json:"I"`
+	Username           string      `json:"N"`
+	Type               int8        `json:"T"`
+	Attributes         []Attribute `json:"A"`
+	Useragent          string      `json:"U"`
+	MFA                bool        `json:"M"`
+	Verified           bool        `json:"V"`
+	decAttribFirstName string
+	decAttribLastName  string
+}
+
+// GetFirstName returns the first name from tokens identity attributes
+func (a *UserDetails) GetFirstName() string {
+	if a.decAttribFirstName == "" {
+		a.populateDecAttributes()
+	}
+	return a.decAttribFirstName
+}
+
+// GetLastName returns the last name from tokens identity attributes
+func (a *UserDetails) GetLastName() string {
+	if a.decAttribLastName == "" {
+		a.populateDecAttributes()
+	}
+	return a.decAttribLastName
+}
+
+// GetEmailAddress returns email address for account
+func (a *UserDetails) GetEmailAddress() string {
+	return a.Username
+}
+
+// GetID returns identity ID for account
+func (a *UserDetails) GetID() string {
+	return a.IdentityID
+}
+
+func (a *UserDetails) populateDecAttributes() {
+	for _, r := range a.Attributes {
+		if r.Key == AttributeKeyFirstNameKey {
+			a.decAttribFirstName = r.Value
+		}
+		if r.Key == AttributeKeyLastNameKey {
+			a.decAttribLastName = r.Value
+		}
+	}
 }
 
 // InitWithRSAPub initialises the fident token package with required crypto keys

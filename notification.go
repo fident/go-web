@@ -34,12 +34,6 @@ const (
 	// JSONTypeKey is the key used for identity type
 	JSONTypeKey = "Type"
 
-	// AttributeKeyFirstNameKey is the key for the first name user identity attribute
-	AttributeKeyFirstNameKey = "firstname"
-
-	// AttributeKeyLastNameKey is the key for the last name user identity attribute
-	AttributeKeyLastNameKey = "lastname"
-
 	// ConfirmationResponse is the response body from sucessful requests to
 	ConfirmationResponse = "con"
 )
@@ -136,7 +130,6 @@ func NotificationEndpoint(rw http.ResponseWriter, req *http.Request) {
 			fmt.Printf("Fident notification helper: Recieved unsigned notification")
 		}
 	}
-
 }
 
 // rsaVerify message signature with public key
@@ -165,7 +158,6 @@ func verifyNotification(n UserUpdatePayload) bool {
 
 	sigString := JSONAttributesKey + attsig + JSONCreatedKey + fmt.Sprintf("%d", n.Created) + JSONIDKey + n.ID + JSONTypeKey +
 		fmt.Sprintf("%d", n.PayloadType) + JSONUsernameKey + n.Username
-
 	return rsaVerify(sigString, n.Signature, &rsaPublicKey)
 }
 
