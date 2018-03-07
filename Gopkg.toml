@@ -1,0 +1,3 @@
+
+[[constraint]]
+  name = "github.com/dgrijalva/jwt-go"
