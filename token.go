@@ -114,19 +114,9 @@ func InitTokenHelperWithAESAndRSAPub(AESKey, RSAPubKeyLocation string) error {
 	return nil
 }
 
-// VerifyRequestToken verifies token for given request
-func VerifyRequestToken(r *http.Request) (UserDetails, error) {
-	tokenCookie, err := r.Cookie(fidentTokenName)
-	if err != nil {
-		if tokenCookie == nil {
-			tokenCookie, err = r.Cookie(fidentTokenNameNonSecure)
-			if err != nil {
-				return UserDetails{}, errors.New("Invalid Token Cookie")
-			}
-		}
-	}
-
-	token, err := jwt.Parse(tokenCookie.Value, func(token *jwt.Token) (interface{}, error) {
+// VerifyToken verifies given token
+func VerifyToken(tokenStr string) (UserDetails, error) {
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
@@ -154,6 +144,21 @@ func VerifyRequestToken(r *http.Request) (UserDetails, error) {
 	}
 
 	return pl, nil
+}
+
+// VerifyRequestToken verifies token for given request
+func VerifyRequestToken(r *http.Request) (UserDetails, error) {
+	tokenCookie, err := r.Cookie(fidentTokenName)
+	if err != nil {
+		if tokenCookie == nil {
+			tokenCookie, err = r.Cookie(fidentTokenNameNonSecure)
+			if err != nil {
+				return UserDetails{}, errors.New("Invalid Token Cookie")
+			}
+		}
+	}
+
+	return VerifyToken(tokenCookie.Value)
 }
 
 func decryptPortcullisPayload(keyin, tokenPayload string) ([]byte, error) {
