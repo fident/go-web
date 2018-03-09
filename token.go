@@ -23,10 +23,11 @@ const (
 	fidentTokenNameNonSecure = "fident-token-ns"
 )
 
-var (
-	aesKey       = ""
+// TokenHelper instance for validating and reading fident tokens
+type TokenHelper struct {
+	aesKey       string
 	rsaPublicKey rsa.PublicKey
-)
+}
 
 // Attribute is a single user attribute
 type Attribute struct {
@@ -85,42 +86,45 @@ func (a *UserDetails) populateDecAttributes() {
 	}
 }
 
-// InitWithRSAPub initialises the fident token package with required crypto keys
-func InitWithRSAPub(RSAPubKeyLocation string) error {
+// NewTokenHelperWithRSAPub initialises the fident token helper with required crypto keys
+func NewTokenHelperWithRSAPub(RSAPubKeyLocation string) (TokenHelper, error) {
+	helper := TokenHelper{}
 	keyData, err := ioutil.ReadFile(RSAPubKeyLocation)
 	if err != nil {
-		return err
+		return helper, err
 	}
 	key, err := jwt.ParseRSAPublicKeyFromPEM(keyData)
 	if err != nil {
-		return err
+		return helper, err
 	}
-	rsaPublicKey = *key
-	return nil
+
+	helper.rsaPublicKey = *key
+	return helper, nil
 }
 
-// InitTokenHelperWithAESAndRSAPub initialises the fident token package with required crypto keys
-func InitTokenHelperWithAESAndRSAPub(AESKey, RSAPubKeyLocation string) error {
-	aesKey = AESKey
+// NewTokenHelperWithAESAndRSAPub initialises the fident token package with required crypto keys
+func NewTokenHelperWithAESAndRSAPub(AESKey, RSAPubKeyLocation string) (TokenHelper, error) {
+	helper := TokenHelper{}
+	helper.aesKey = AESKey
 	keyData, err := ioutil.ReadFile(RSAPubKeyLocation)
 	if err != nil {
-		return err
+		return helper, err
 	}
 	key, err := jwt.ParseRSAPublicKeyFromPEM(keyData)
 	if err != nil {
-		return err
+		return helper, err
 	}
-	rsaPublicKey = *key
-	return nil
+	helper.rsaPublicKey = *key
+	return helper, nil
 }
 
 // VerifyToken verifies given token
-func VerifyToken(tokenStr string) (UserDetails, error) {
+func (t *TokenHelper) VerifyToken(tokenStr string) (UserDetails, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return &rsaPublicKey, nil
+		return &t.rsaPublicKey, nil
 	})
 
 	if err != nil || token.Valid == false {
@@ -132,7 +136,7 @@ func VerifyToken(tokenStr string) (UserDetails, error) {
 		return UserDetails{}, errors.New("Unable to map token claims")
 	}
 
-	payload, err := decryptPortcullisPayload(aesKey, claims["payload"].(string))
+	payload, err := decryptPortcullisPayload(t.aesKey, claims["payload"].(string))
 	if err != nil {
 		return UserDetails{}, err
 	}
@@ -147,7 +151,7 @@ func VerifyToken(tokenStr string) (UserDetails, error) {
 }
 
 // VerifyRequestToken verifies token for given request
-func VerifyRequestToken(r *http.Request) (UserDetails, error) {
+func (t *TokenHelper) VerifyRequestToken(r *http.Request) (UserDetails, error) {
 	tokenCookie, err := r.Cookie(fidentTokenName)
 	if err != nil {
 		if tokenCookie == nil {
@@ -158,7 +162,7 @@ func VerifyRequestToken(r *http.Request) (UserDetails, error) {
 		}
 	}
 
-	return VerifyToken(tokenCookie.Value)
+	return t.VerifyToken(tokenCookie.Value)
 }
 
 func decryptPortcullisPayload(keyin, tokenPayload string) ([]byte, error) {

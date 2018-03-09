@@ -54,6 +54,13 @@ type UserAttribute struct {
 	Value string `json:"Value"`
 }
 
+var notificationTokenHelper TokenHelper
+
+// SetNotificationTokenHelper sets the token helper used by notification endpoints
+func SetNotificationTokenHelper(t TokenHelper) {
+	notificationTokenHelper = t
+}
+
 // GetFirstNameAttribute returns the first name from account detail attributes
 func (a *UserUpdatePayload) GetFirstNameAttribute() string {
 	for _, r := range a.Attributes {
@@ -158,7 +165,7 @@ func verifyNotification(n UserUpdatePayload) bool {
 
 	sigString := JSONAttributesKey + attsig + JSONCreatedKey + fmt.Sprintf("%d", n.Created) + JSONIDKey + n.ID + JSONTypeKey +
 		fmt.Sprintf("%d", n.PayloadType) + JSONUsernameKey + n.Username
-	return rsaVerify(sigString, n.Signature, &rsaPublicKey)
+	return rsaVerify(sigString, n.Signature, &notificationTokenHelper.rsaPublicKey)
 }
 
 // NotificationFirstNameAttributeKey returns key for first name attribute
