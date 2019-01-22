@@ -46,10 +46,11 @@ type SignedPayload struct {
 
 // UserUpdatePayload is the serialisable structure for user updates
 type UserUpdatePayload struct {
-	ID         string             `json:"ID"`
-	Username   string             `json:"Username"`
-	Created    int64              `json:"Created"`
-	Attributes userAttributeSlice `json:"Attributes"`
+	ID          string             `json:"ID"`
+	Username    string             `json:"Username"`
+	Created     int64              `json:"Created"`
+	Attributes  userAttributeSlice `json:"Attributes"`
+	PayloadType int64              `json:"data_type"`
 }
 
 // UserAttribute is the serialisable structure for user attributes
