@@ -39,9 +39,9 @@ const (
 
 // SignedPayload is a signed fident payload, signature should match data
 type SignedPayload struct {
-	Data        string `json:"data"`
-	PayloadType int64  `json:"data_type"`
-	Signature   string `json:"signature"`
+	Data        string `json:"Data"`
+	PayloadType int64  `json:"DataType"`
+	Signature   string `json:"Signature"`
 }
 
 // UserUpdatePayload is the serialisable structure for user updates
@@ -50,7 +50,7 @@ type UserUpdatePayload struct {
 	Username    string             `json:"Username"`
 	Created     int64              `json:"Created"`
 	Attributes  userAttributeSlice `json:"Attributes"`
-	PayloadType int64              `json:"data_type"`
+	PayloadType int64              `json:"DataType"`
 }
 
 // UserAttribute is the serialisable structure for user attributes
