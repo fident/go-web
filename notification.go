@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"sort"
 	"strings"
 )
 
@@ -38,14 +37,19 @@ const (
 	ConfirmationResponse = "con"
 )
 
+// SignedPayload is a signed fident payload, signature should match data
+type SignedPayload struct {
+	Data        string `json:"data"`
+	PayloadType int64  `json:"data_type"`
+	Signature   string `json:"signature"`
+}
+
 // UserUpdatePayload is the serialisable structure for user updates
 type UserUpdatePayload struct {
-	ID          string             `json:"ID"`
-	Username    string             `json:"Username"`
-	Created     int64              `json:"Created"`
-	Attributes  userAttributeSlice `json:"Attributes"`
-	PayloadType int                `json:"Type"`
-	Signature   string             `json:"Signature"`
+	ID         string             `json:"ID"`
+	Username   string             `json:"Username"`
+	Created    int64              `json:"Created"`
+	Attributes userAttributeSlice `json:"Attributes"`
 }
 
 // UserAttribute is the serialisable structure for user attributes
@@ -122,12 +126,17 @@ func NotificationEndpoint(rw http.ResponseWriter, req *http.Request) {
 	}
 	p := make([]byte, req.ContentLength)
 	req.Body.Read(p)
-	var payload UserUpdatePayload
+	var payload SignedPayload
 	err := json.Unmarshal(p, &payload)
 	if err == nil {
 		if verifyNotification(payload) {
 			if notificationHandler != nil {
-				if notificationHandler(payload) {
+				var pl UserUpdatePayload
+				err := json.Unmarshal([]byte(payload.Data), &pl)
+				if err != nil {
+					http.NotFound(rw, req)
+				}
+				if notificationHandler(pl) {
 					rw.Write([]byte(ConfirmationResponse))
 				}
 			} else {
@@ -156,16 +165,8 @@ func rsaVerify(data, signature string, pubkey *rsa.PublicKey) bool {
 }
 
 // verifies notification payload originates from Fident
-func verifyNotification(n UserUpdatePayload) bool {
-	sort.Sort(n.Attributes)
-	attsig := ""
-	for _, a := range n.Attributes {
-		attsig += a.Key + a.Value
-	}
-
-	sigString := JSONAttributesKey + attsig + JSONCreatedKey + fmt.Sprintf("%d", n.Created) + JSONIDKey + n.ID + JSONTypeKey +
-		fmt.Sprintf("%d", n.PayloadType) + JSONUsernameKey + n.Username
-	return rsaVerify(sigString, n.Signature, &notificationTokenHelper.rsaPublicKey)
+func verifyNotification(n SignedPayload) bool {
+	return rsaVerify(n.Data, n.Signature, &notificationTokenHelper.rsaPublicKey)
 }
 
 // NotificationFirstNameAttributeKey returns key for first name attribute

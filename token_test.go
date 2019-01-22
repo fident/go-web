@@ -3,7 +3,7 @@ package gofidentweb_test
 import (
 	"testing"
 
-	"github.com/fident/gofidentweb"
+	gofidentweb "github.com/fident/go-web"
 )
 
 const (
