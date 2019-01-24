@@ -69,7 +69,7 @@ func SetNotificationTokenHelper(t TokenHelper) {
 // GetFirstNameAttribute returns the first name from account detail attributes
 func (a *UserUpdatePayload) GetFirstNameAttribute() string {
 	for _, r := range a.Attributes {
-		if r.Key == AttributeKeyFirstNameKey {
+		if r.Key == AttributeKeyFirstName {
 			return r.Value
 		}
 	}
@@ -79,7 +79,7 @@ func (a *UserUpdatePayload) GetFirstNameAttribute() string {
 // GetLastNameAttribute returns the last name from account detail attributes
 func (a *UserUpdatePayload) GetLastNameAttribute() string {
 	for _, r := range a.Attributes {
-		if r.Key == AttributeKeyLastNameKey {
+		if r.Key == AttributeKeyLastName {
 			return r.Value
 		}
 	}
@@ -172,10 +172,10 @@ func verifyNotification(n SignedPayload) bool {
 
 // NotificationFirstNameAttributeKey returns key for first name attribute
 func NotificationFirstNameAttributeKey() string {
-	return AttributeKeyFirstNameKey
+	return AttributeKeyFirstName
 }
 
 // NotificationLastNameAttributeKey returns key for last name attribute
 func NotificationLastNameAttributeKey() string {
-	return AttributeKeyLastNameKey
+	return AttributeKeyLastName
 }

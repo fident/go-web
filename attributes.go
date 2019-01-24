@@ -5,11 +5,11 @@ const (
 	*   Identity attribute keys
 	**/
 
-	// AttributeKeyFirstNameKey is the key for the first name user identity attribute
-	AttributeKeyFirstNameKey = "firstname"
+	// AttributeKeyFirstName is the key for the first name user identity attribute
+	AttributeKeyFirstName = "firstname"
 
-	// AttributeKeyLastNameKey is the key for the last name user identity attribute
-	AttributeKeyLastNameKey = "lastname"
+	// AttributeKeyLastName is the key for the last name user identity attribute
+	AttributeKeyLastName = "lastname"
 
 	// AttributeKeyServiceName is the key for the service name identity attribute
 	AttributeKeyServiceName = "servicename"

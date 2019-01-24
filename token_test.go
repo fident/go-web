@@ -15,12 +15,12 @@ func TestUserDetailDecAttrib(t *testing.T) {
 	a := []gofidentweb.Attribute{}
 
 	a = append(a, gofidentweb.Attribute{
-		Key:   gofidentweb.AttributeKeyFirstNameKey,
+		Key:   gofidentweb.AttributeKeyFirstName,
 		Value: FNK,
 	})
 
 	a = append(a, gofidentweb.Attribute{
-		Key:   gofidentweb.AttributeKeyLastNameKey,
+		Key:   gofidentweb.AttributeKeyLastName,
 		Value: LNK,
 	})
 

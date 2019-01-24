@@ -77,10 +77,10 @@ func (a *UserDetails) GetID() string {
 
 func (a *UserDetails) populateDecAttributes() {
 	for _, r := range a.Attributes {
-		if r.Key == AttributeKeyFirstNameKey {
+		if r.Key == AttributeKeyFirstName {
 			a.decAttribFirstName = r.Value
 		}
-		if r.Key == AttributeKeyLastNameKey {
+		if r.Key == AttributeKeyLastName {
 			a.decAttribLastName = r.Value
 		}
 	}
