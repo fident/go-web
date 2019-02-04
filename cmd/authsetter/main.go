@@ -10,7 +10,7 @@ import (
 
 const (
 	productionFidentTokenEndpoint = "https://authsetter.fident.io"
-	localFidentTokenEndpoint      = "http://localhost:8081"
+	localFidentTokenEndpoint      = "http://localhost:7181"
 
 	serviceName    = "authsetter proxy"
 	serviceVersion = "1.0.0"
