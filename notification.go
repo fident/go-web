@@ -113,16 +113,21 @@ func (d userAttributeSlice) Less(i, j int) bool {
 	return silow < sjlow
 }
 
-var notificationHandler NotificationHandler
+var (
+	notificationHandler NotificationHandler
+	notificationKey     string
+)
 
-// SetNotificationHandler sets reference to your applications fident notification handler
-func SetNotificationHandler(handler NotificationHandler) {
+// StartNotificationHandler sets reference to your applications fident notification handler
+// uses your token key to decrypt notification payload data
+func StartNotificationHandler(key string, handler NotificationHandler) {
 	notificationHandler = handler
+	notificationKey = key
 }
 
 // NotificationEndpoint handles notifications from fident for events such as user updates
 func NotificationEndpoint(rw http.ResponseWriter, req *http.Request) {
-	if req.Method != "POST" {
+	if req.Method != http.MethodPost {
 		http.NotFound(rw, req)
 	}
 	p := make([]byte, req.ContentLength)
@@ -132,8 +137,19 @@ func NotificationEndpoint(rw http.ResponseWriter, req *http.Request) {
 	if err == nil {
 		if verifyNotification(payload) {
 			if notificationHandler != nil {
+				if notificationKey == "" {
+					fmt.Printf("Fident notification helper: Failed to decrypt payload data (decryption key not set)")
+					return
+				}
+
 				var pl UserUpdatePayload
-				err := json.Unmarshal([]byte(payload.Data), &pl)
+				dat, err := decryptPayload(notificationKey, payload.Data)
+				if err != nil {
+					fmt.Printf("Fident notification helper: Failed to decrypt payload data")
+					return
+				}
+
+				err = json.Unmarshal([]byte(dat), &pl)
 				if err != nil {
 					http.NotFound(rw, req)
 				}

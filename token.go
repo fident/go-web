@@ -136,7 +136,7 @@ func (t *TokenHelper) VerifyToken(tokenStr string) (UserDetails, error) {
 		return UserDetails{}, errors.New("Unable to map token claims")
 	}
 
-	payload, err := decryptPortcullisPayload(t.aesKey, claims["payload"].(string))
+	payload, err := decryptPayload(t.aesKey, claims["payload"].(string))
 	if err != nil {
 		return UserDetails{}, err
 	}
@@ -165,7 +165,7 @@ func (t *TokenHelper) VerifyRequestToken(r *http.Request) (UserDetails, error) {
 	return t.VerifyToken(tokenCookie.Value)
 }
 
-func decryptPortcullisPayload(keyin, tokenPayload string) ([]byte, error) {
+func decryptPayload(keyin, tokenPayload string) ([]byte, error) {
 	key := []byte(keyin)
 	text, err := base64.StdEncoding.DecodeString(tokenPayload)
 	if err != nil {
