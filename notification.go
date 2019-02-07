@@ -118,11 +118,9 @@ var (
 	notificationKey     string
 )
 
-// StartNotificationHandler sets reference to your applications fident notification handler
-// uses your token key to decrypt notification payload data
-func StartNotificationHandler(key string, handler NotificationHandler) {
+// SetNotificationHandler sets reference to your applications fident notification handler
+func SetNotificationHandler(handler NotificationHandler) {
 	notificationHandler = handler
-	notificationKey = key
 }
 
 // NotificationEndpoint handles notifications from fident for events such as user updates
@@ -137,13 +135,13 @@ func NotificationEndpoint(rw http.ResponseWriter, req *http.Request) {
 	if err == nil {
 		if verifyNotification(payload) {
 			if notificationHandler != nil {
-				if notificationKey == "" {
+				if notificationTokenHelper.aesKey == "" {
 					fmt.Printf("Fident notification helper: Failed to decrypt payload data (decryption key not set)")
 					return
 				}
 
 				var pl UserUpdatePayload
-				dat, err := decryptPayload(notificationKey, payload.Data)
+				dat, err := decryptPayload(notificationTokenHelper.aesKey, payload.Data)
 				if err != nil {
 					fmt.Printf("Fident notification helper: Failed to decrypt payload data")
 					return
