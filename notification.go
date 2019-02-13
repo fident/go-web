@@ -51,6 +51,7 @@ type UserUpdatePayload struct {
 	Created     int64              `json:"Created"`
 	Attributes  userAttributeSlice `json:"Attributes"`
 	PayloadType int64              `json:"DataType"`
+	Timestamp   int64              `json:"Timestamp"`
 }
 
 // UserAttribute is the serialisable structure for user attributes
