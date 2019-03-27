@@ -38,10 +38,3 @@ server.HandleFunc(NotificationEndpoint, gofidentweb.NotificationEndpoint)
 // The following method would be called with a user update notification payload
 func fidentNotificationHandler(payload fident.UserUpdatePayload) {
 ```
-
----
-#### Authset helper
-Helper sets auth on your products domain
-```go
-gofidentweb.StartAuthsetProxy(fidentTokenEndpoint, server)
-```
