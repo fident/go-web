@@ -118,6 +118,14 @@ func NewTokenHelperWithAESAndRSAPub(AESKey, RSAPubKeyLocation string) (TokenHelp
 	return helper, nil
 }
 
+// NewTokenHelper initialises the fident token
+func NewTokenHelper(AESKey string, RSAPubKey rsa.PublicKey) (TokenHelper, error) {
+	helper := TokenHelper{}
+	helper.aesKey = AESKey
+	helper.rsaPublicKey = RSAPubKey
+	return helper, nil
+}
+
 // VerifyToken verifies given token
 func (t *TokenHelper) VerifyToken(tokenStr string) (UserDetails, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {

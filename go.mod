@@ -6,3 +6,5 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
+
+go 1.13
