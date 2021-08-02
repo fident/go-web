@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -47,6 +48,7 @@ type UserDetails struct {
 	Verified           bool        `json:"V"`
 	decAttribFirstName string
 	decAttribLastName  string
+	claims             jwt.MapClaims
 }
 
 // GetFirstName returns the first name from tokens identity attributes
@@ -71,9 +73,13 @@ func (a *UserDetails) GetEmailAddress() string {
 }
 
 // GetID returns identity ID for account
-func (a *UserDetails) GetID() string {
-	return a.IdentityID
-}
+func (a *UserDetails) GetID() string { return a.IdentityID }
+
+func (a *UserDetails) GetAccountType() string { return a.claims["account_type"].(string) }
+func (a *UserDetails) GetIssuer() string      { return a.claims["iss"].(string) }
+func (a *UserDetails) GetIssuedAt() time.Time { return time.Unix(a.claims["iat"].(int64), 0) }
+func (a *UserDetails) GetExpiry() time.Time   { return time.Unix(a.claims["exp"].(int64), 0) }
+func (a *UserDetails) GetSubject() string     { return a.claims["sub"].(string) }
 
 func (a *UserDetails) populateDecAttributes() {
 	for _, r := range a.Attributes {
@@ -154,7 +160,7 @@ func (t *TokenHelper) VerifyToken(tokenStr string) (UserDetails, error) {
 	if err != nil {
 		return UserDetails{}, err
 	}
-
+	pl.claims = claims
 	return pl, nil
 }
 
