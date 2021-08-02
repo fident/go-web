@@ -20,8 +20,8 @@ import (
 **/
 
 const (
-	fidentTokenName          = "fident-token"
-	fidentTokenNameNonSecure = "fident-token-ns"
+	TokenName          = "fident-token"
+	TokenNameNonSecure = "fident-token-ns"
 )
 
 // TokenHelper instance for validating and reading fident tokens
@@ -75,11 +75,12 @@ func (a *UserDetails) GetEmailAddress() string {
 // GetID returns identity ID for account
 func (a *UserDetails) GetID() string { return a.IdentityID }
 
-func (a *UserDetails) GetAccountType() string { return a.claims["account_type"].(string) }
-func (a *UserDetails) GetIssuer() string      { return a.claims["iss"].(string) }
-func (a *UserDetails) GetIssuedAt() time.Time { return time.Unix(a.claims["iat"].(int64), 0) }
-func (a *UserDetails) GetExpiry() time.Time   { return time.Unix(a.claims["exp"].(int64), 0) }
-func (a *UserDetails) GetSubject() string     { return a.claims["sub"].(string) }
+func (a *UserDetails) GetAccountType() string          { return a.claims["account_type"].(string) }
+func (a *UserDetails) GetIssuer() string               { return a.claims["iss"].(string) }
+func (a *UserDetails) GetIssuedAt() time.Time          { return time.Unix(a.claims["iat"].(int64), 0) }
+func (a *UserDetails) GetExpiry() time.Time            { return time.Unix(a.claims["exp"].(int64), 0) }
+func (a *UserDetails) GetSubject() string              { return a.claims["sub"].(string) }
+func (a *UserDetails) GetClaim(key string) interface{} { return a.claims[key] }
 
 func (a *UserDetails) populateDecAttributes() {
 	for _, r := range a.Attributes {
@@ -166,10 +167,10 @@ func (t *TokenHelper) VerifyToken(tokenStr string) (UserDetails, error) {
 
 // VerifyRequestToken verifies token for given request
 func (t *TokenHelper) VerifyRequestToken(r *http.Request) (UserDetails, error) {
-	tokenCookie, err := r.Cookie(fidentTokenName)
+	tokenCookie, err := r.Cookie(TokenName)
 	if err != nil {
 		if tokenCookie == nil {
-			tokenCookie, err = r.Cookie(fidentTokenNameNonSecure)
+			tokenCookie, err = r.Cookie(TokenNameNonSecure)
 			if err != nil {
 				return UserDetails{}, errors.New("Invalid Token Cookie")
 			}
