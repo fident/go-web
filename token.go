@@ -8,11 +8,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/golang-jwt/jwt"
 	"io/ioutil"
 	"net/http"
 	"time"
-
-	jwt "github.com/dgrijalva/jwt-go"
 )
 
 /**
@@ -137,18 +136,18 @@ func NewTokenHelper(AESKey string, RSAPubKey rsa.PublicKey) (TokenHelper, error)
 func (t *TokenHelper) VerifyToken(tokenStr string) (UserDetails, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return &t.rsaPublicKey, nil
 	})
 
 	if err != nil || token.Valid == false {
-		return UserDetails{}, errors.New("Invalid Token")
+		return UserDetails{}, errors.New("invalid Token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return UserDetails{}, errors.New("Unable to map token claims")
+		return UserDetails{}, errors.New("unable to map token claims")
 	}
 
 	payload, err := decryptPayload(t.aesKey, claims["payload"].(string))
@@ -168,12 +167,9 @@ func (t *TokenHelper) VerifyToken(tokenStr string) (UserDetails, error) {
 // VerifyRequestToken verifies token for given request
 func (t *TokenHelper) VerifyRequestToken(r *http.Request) (UserDetails, error) {
 	tokenCookie, err := r.Cookie(TokenName)
-	if err != nil {
-		if tokenCookie == nil {
-			tokenCookie, err = r.Cookie(TokenNameNonSecure)
-			if err != nil {
-				return UserDetails{}, errors.New("Invalid Token Cookie")
-			}
+	if err != nil || tokenCookie == nil {
+		if tokenCookie, err = r.Cookie(TokenNameNonSecure); err != nil {
+			return UserDetails{}, errors.New("invalid Token Cookie")
 		}
 	}
 
