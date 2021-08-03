@@ -11,6 +11,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -76,8 +77,8 @@ func (a *UserDetails) GetID() string { return a.IdentityID }
 
 func (a *UserDetails) GetAccountType() string          { return a.claims["account_type"].(string) }
 func (a *UserDetails) GetIssuer() string               { return a.claims["iss"].(string) }
-func (a *UserDetails) GetIssuedAt() time.Time          { return time.Unix(a.claims["iat"].(int64), 0) }
-func (a *UserDetails) GetExpiry() time.Time            { return time.Unix(a.claims["exp"].(int64), 0) }
+func (a *UserDetails) GetIssuedAt() time.Time          { return timeClaim(a.claims["iat"]) }
+func (a *UserDetails) GetExpiry() time.Time            { return timeClaim(a.claims["exp"]) }
 func (a *UserDetails) GetSubject() string              { return a.claims["sub"].(string) }
 func (a *UserDetails) GetClaim(key string) interface{} { return a.claims[key] }
 
@@ -90,6 +91,23 @@ func (a *UserDetails) populateDecAttributes() {
 			a.decAttribLastName = r.Value
 		}
 	}
+}
+
+func timeClaim(value interface{}) time.Time {
+	switch claim := value.(type) {
+	case float64:
+		return time.Unix(int64(claim), 0)
+	case json.Number:
+		v, _ := claim.Int64()
+		return time.Unix(v, 0)
+	case int64:
+		return time.Unix(claim, 0)
+	case string:
+		if claim, err := strconv.ParseInt(claim, 10, 64); err == nil {
+			return time.Unix(claim, 0)
+		}
+	}
+	return time.Unix(0, 0)
 }
 
 // NewTokenHelperWithRSAPub initialises the fident token helper with required crypto keys
